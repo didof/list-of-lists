@@ -1,0 +1,37 @@
+:root {
+    --clr-primary: rgb(54, 112, 199);
+    --clr-light: #f4f4f4;
+    --clr-dark: rgb(0, 9, 133);
+    --clr-darker: rgb(0, 5, 75);
+    --clr-warning: rgb(99, 36, 36);
+    --size-padding: 15px;
+}
+
+*, *::before, *::after {
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--clr-darker);
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 2fr 4fr 1fr;
+    grid-template-rows: 1fr 2fr 1fr;
+
+    font-family: verdana;
+    color: white;
+    font-size: 1rem;
+}
+
+.lists {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+    background-color: var(--clr-dark);
+    padding: var(--size-padding);
+}
+
+ul {
+    list-style: none;
+}
