@@ -32,6 +32,11 @@ body {
     padding: var(--size-padding);
 }
 
+.selected {
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+}
+
 ul {
     list-style: none;
 }

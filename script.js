@@ -23,7 +23,7 @@ const DisplayModule = (() => {
 return {
         test: () => 'operative',
         getScreenReferences: () => screenReferences,
-        renderLists: (lists) => {
+        renderLists: (lists, shorthands) => {
             // delete from container all obsolete elements
             clearElement(screenReferences.static.listContainer);
 
@@ -32,8 +32,16 @@ return {
                 const listElement = document.createElement('li');
                 listElement.dataset.listId = list.id;
                 listElement.classList.add('list-name');
-                listElement.innerText = list.name;
 
+                // check if this "list" is the selected one
+                if(list.id === localStorage.getItem(shorthands.LS_SELECTED_LIST_ID_KEY)) {
+                    listElement.classList.add('selected');
+                    listElement.innerText = list.name.toUpperCase();
+                } else {
+                    listElement.innerText = list.name;
+                }
+                
+                // add new list child
                 screenReferences.static.listContainer.appendChild(listElement);
             });
         }
@@ -41,32 +49,60 @@ return {
 
 })();
 
+// ##############################################################################################
+
 const LogicModule = (() => {
 
     const LS_LIST_KEY = "list.list"; // list of lists
+    const LS_SELECTED_LIST_ID_KEY = "list.selectedListId";
 
     let lists = JSON.parse(localStorage.getItem(LS_LIST_KEY)) || []; // loon in storage, otherwise empty array
+    let selectedListId = localStorage.getItem(LS_SELECTED_LIST_ID_KEY);
 
 return {
         test: () => 'operative',
         getLists: () => lists,
+        getLSshorthands: () => {
+            return {
+                LS_LIST_KEY,
+                LS_SELECTED_LIST_ID_KEY
+            }
+        },
         addNewList: newList => {
             lists.push(newList);
         },
         saveLists: () => {
             localStorage.setItem(LS_LIST_KEY, JSON.stringify(lists));
+        },
+        saveSelected: () => {
+            localStorage.setItem(LS_SELECTED_LIST_ID_KEY, selectedListId);
+
+        },
+        selectList: event => {
+            // if user clicks a list
+            if(event.target.tagName.toLowerCase() == "li") {
+                selectedListId = event.target.dataset.listId;
+            }
         }
     }
 
 })();
 
+// ##############################################################################################
+
 const ControllerModule = ((display, logic) => {
+
+    // ask logic => get shorthands for localstorage
+    const LSshorthands = logic.getLSshorthands();
 
     const setupEventListeners = () => {
         const screenReferences = display.getScreenReferences();
 
         // add Event Listeners to interactables
         screenReferences.interact.newListForm.addEventListener('submit', addNewList);
+
+        // add Event Listeners to statics
+        screenReferences.static.listContainer.addEventListener('click', selectList);
 
         // Return for later usage
         return screenReferences;
@@ -77,11 +113,12 @@ const ControllerModule = ((display, logic) => {
         let lists = logic.getLists();
 
         // send to display
-        display.renderLists(lists);
+        display.renderLists(lists, LSshorthands);
     }
 
     const save = () => {
         logic.saveLists();
+        logic.saveSelected();
     }
 
     const actionComplete = () => {
@@ -113,6 +150,15 @@ const ControllerModule = ((display, logic) => {
         actionComplete();
     }
 
+    const selectList = event => {
+
+        // ask logic => save in storage the selected list
+        logic.selectList(event);
+
+        // Action Complete
+        actionComplete();
+    }
+
     const createList = name => {
         return {
             id: Date.now().toString(),
@@ -130,6 +176,9 @@ const ControllerModule = ((display, logic) => {
             setupEventListeners();
             render();
             console.log('App started successfully.')
+        },
+        showReferences: () => {
+            console.log(setupEventListeners());
         }
     }
 })(DisplayModule, LogicModule);
