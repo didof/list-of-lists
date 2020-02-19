@@ -13,14 +13,45 @@
 
 <body>
     <div class="lists">
-        <h2>My lists</h2>
-        <ul data-lists></ul>
+        <h2 class="header">My lists</h2>
+        <ul class="list-lister" data-lists></ul>
 
         <form action="" data-new-list-form>
-            <input type="text" data-new-list-input>
-            <button>+</button>
+            <input type="text" data-new-list-input class="input" placeholder="new list name">
+            <button class="btn create">+</button>
         </form>
     </div>
+
+    <div class="tasks">
+        <div class="header">
+            <h2 class="title" data-list-title>No list selected</h2>
+            <p class="count" data-list-count></p>
+        </div>
+        <div class="body" data-list-display-container>
+            <div class="list">
+            </div>
+        </div>
+        <div class="new-task">
+            <form action="" data-new-task-form>
+                <input type="text" data-new-task-input class="input" placeholder="new list name">
+                <button class="btn create">+</button>
+            </form>
+        </div>
+        <div class="operations">
+            <button class="btn" data-delete-list-button>X</button>
+            <button class="btn"></button>
+            <button class="btn"></button>
+
+        </div>
+    </div>
+    <template id="template">
+        <div class="task">
+            <input type="checkbox">
+            <label>
+                <span class="custom-checkbox"></span>
+            </label>
+        </div>
+    </template>
 </body>
 
 </html>
